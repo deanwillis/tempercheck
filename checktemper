@@ -1,0 +1,81 @@
+#!/usr/bin/python
+
+from subprocess import check_output
+
+ACTFILE="/etc/temperlimits";
+
+print "Looking for file " + repr(ACTFILE)
+
+def LoadConfig(configFileName):
+  try:
+    f = open( configFileName, 'r')
+
+  except IOError:
+    print "Could not open " + repr(configFileName)
+
+  else:
+    #print f
+
+    try:
+      instr = f.readline();
+
+    except IOError:
+      print "Error reading from " + repr(configFilename)
+
+    else:
+      #print "Config line is " + repr (instr )
+      pollMode = instr.replace( "\n", "" )
+
+      try:
+        instr = f.readline()
+  
+      except IOError:
+        print "Error reading from " + repr(configFilename)
+  
+      else:
+        #print "Config line is " + repr( instr )
+        tempLower = instr.replace("\n","")
+        #print "tempLower is " + repr( tempLower )
+
+        try:
+          instr = f.readline()
+
+        except IOError:
+          print"Error reading from " | repr(configFileName)
+
+        else:
+          #print "Config line is " + repr( instr )
+          tempUpper = instr.replace("\n","")
+          #print "tempUpper is " + repr( tempUpper )
+          return pollMode, tempLower, tempUpper
+
+
+def getCurrentTemp():
+  currentTemp = check_output(["temper"]).replace("\n","")
+  return currentTemp
+
+pollMode, tempLower, tempUpper = LoadConfig( ACTFILE)
+
+print "Parameters are '" +pollMode + "' '" +  tempLower + "' '" + tempUpper + "'\n" 
+
+if pollMode == "ON":
+
+  currentTemp = getCurrentTemp()
+
+  print "currentTemp = "+ repr(currentTemp)
+
+  alertNow="FALSE"
+
+  if currentTemp > tempLower:
+    print "Current temperature is above lower threshold of alerting\n"
+  else:
+    print "Current temperature is above threshold of alerting\n"
+    alertNow = "TRUE"
+
+  if currentTemp < tempUpper:
+    print "Current temperature is below upper threshold of alerting\n"
+  else: 
+    print "Current temperature is above upper threshold of al;erting\n"
+    alertNOW = "TRUE"
+
+  print "alertNow =" + alertNow + "\n"

@@ -1,0 +1,6 @@
+#!/bin/sh
+temper=`sudo temper-poll | awk '/Device/ {print substr($4,0,length($4)-4)}'`
+echo $temper
+#{print substr($4,0,length($4)-2)}
+
+
